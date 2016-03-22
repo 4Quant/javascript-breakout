@@ -1,5 +1,6 @@
 Breakout
 ========
+Deep Q Learning added using the [reinforcejs](https://github.com/karpathy/reinforcejs) library from Andrej Karparthy
 
 Another HTML5 experiment to implement BREAKOUT in a `<canvas>`
 
