@@ -6,12 +6,12 @@ Breakout = {
 
   Defaults: {
 
-    fps: 60,
+    fps: 120,
     stats: false,
 
     score: {
       lives: {
-        initial: 3,
+        initial: 5,
         max: 5
       }
     },
@@ -23,7 +23,7 @@ Breakout = {
 
     ball: {
       radius:  0.3,
-      speed:   15,
+      speed:   50,
       labels: {
         3: { text: 'ready...', fill: '#D82800', stroke: 'black', font: 'bold 28pt arial' },
         2: { text: 'set..',    fill: '#FC9838', stroke: 'black', font: 'bold 28pt arial' },
@@ -173,6 +173,7 @@ Breakout = {
     if (this.score.loseLife())
       this.lose();
     else {
+      this.court.rerender = true;     
       this.ball.reset({launch: true});
     }
   },
@@ -245,10 +246,12 @@ Breakout = {
       this.load();
       this.reset();
     },
+    ball_loss_penalty: 50,
 
     reset:    function()  { this.set(0); this.resetLives(); },
     set:      function(n) { this.score = this.vscore = n; this.rerender = true; },
-    increase: function(n) { this.score = this.score + n;  this.rerender = true; },
+    increase: function(n) { this.score = this.score + n; this.rerender = true; },
+    decrease: function(n) { this.score = this.vscore = this.score - n; this.rerender = true; },
     format:   function(n) { return ("0000000" + n).slice(-7); },
     load:     function()  { this.highscore = this.game.storage.highscore ? parseInt(this.game.storage.highscore) : 1000; },
     save:     function()  { if (this.score > this.highscore) this.game.storage.highscore = this.highscore = this.score;  },
@@ -256,7 +259,7 @@ Breakout = {
     resetLives: function()  { this.setLives(this.cfg.lives.initial);                       }, 
     setLives:   function(n) { this.lives = n; this.rerender = true;                        },
     gainLife:   function()  { this.setLives(Math.min(this.cfg.lives.max, this.lives + 1)); },
-    loseLife:   function()  { this.setLives(this.lives-1); return (this.lives == 0);       },
+    loseLife:   function()  { this.setLives(this.lives); this.decrease(this.ball_loss_penalty); return (this.lives == 0);       }, // we don't need to lose lives, but it should be penalized
  
     update: function(dt) {
       if (this.vscore < this.score) {
